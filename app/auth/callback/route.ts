@@ -1,0 +1,32 @@
+import { createClient } from '@/utils/supabase/server'
+import { NextResponse } from 'next/server'
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url)
+  const code = searchParams.get('code')
+  const tokenHash = searchParams.get('token_hash')
+  const type = searchParams.get('type')
+  const next = searchParams.get('next') ?? '/dashboard'
+
+  const supabase = await createClient()
+
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    console.log('exchange error:', error)
+    console.log('exchange data:', data)
+    if (!error) {
+      const redirectTo = type === 'recovery' ? '/auth/reset-password' : next
+      return NextResponse.redirect(`${origin}${redirectTo}`)
+    }
+  }
+
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as any })
+    if (!error) {
+      const redirectTo = type === 'recovery' ? '/auth/reset-password' : next
+      return NextResponse.redirect(`${origin}${redirectTo}`)
+    }
+  }
+
+  return NextResponse.redirect(`${origin}/auth/login?error=Could not verify email`)
+}
