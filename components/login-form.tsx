@@ -6,6 +6,48 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+type InputProps = {
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  isPassword?: boolean;
+  showPassword?: boolean;
+  setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Input = ({
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  isPassword,
+  showPassword,
+  setShowPassword,
+}: InputProps) => {
+  return (
+    <div className="relative">
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-gray-900 border border-gray-800 focus:border-red-900 rounded px-4 py-2 text-white outline-none"
+      />
+
+      {isPassword && setShowPassword && (
+        <button
+          type="button"
+          onClick={() => setShowPassword((v) => !v)}
+          className="absolute right-3 top-2 text-gray-500"
+        >
+          {showPassword ? <EyeOff /> : <Eye />}
+        </button>
+      )}
+    </div>
+  );
+};
+
 export function LoginForm() {
   const supabase = createClient();
   const router = useRouter();
@@ -19,7 +61,7 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (key: string, value: string) => {
+  const handleChange = (key: 'email' | 'password', value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -45,45 +87,22 @@ export function LoginForm() {
       .eq('id', data.user.id)
       .single();
 
+    //will create user on users
+
     setLoading(false);
 
     if (userError) return setError(userError.message);
 
-    if (userData?.role === 'admin') {
-      router.push('/admin/dashboard');
-    } else if (['user', 'band_member'].includes(userData?.role)) {
-      router.push('/member/dashboard');
-    } else {
-      setError('Unknown user role');
-    }
-  };
+    // if (userData?.role === 'admin') {
+    //   router.push('/admin/dashboard');
+    // } else if (['user', 'band_member'].includes(userData?.role)) {
+    //   router.push('/member/dashboard');
+    // } else {
+    //   setError('Unknown user role');
+    // }
 
-  const Input = ({
-    type = 'text',
-    placeholder,
-    value,
-    onChange,
-    isPassword,
-  }: any) => (
-    <div className="relative">
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-gray-900 border border-gray-800 focus:border-red-900 rounded px-4 py-2 text-white outline-none"
-      />
-      {isPassword && (
-        <button
-          type="button"
-          onClick={() => setShowPassword((v) => !v)}
-          className="absolute right-3 top-2 text-gray-500"
-        >
-          {type === 'password' ? <Eye /> : <EyeOff />}
-        </button>
-      )}
-    </div>
-  );
+    router.push('/dashboard');
+  };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">
@@ -91,15 +110,17 @@ export function LoginForm() {
         type="email"
         placeholder="Email"
         value={form.email}
-        onChange={(v: string) => handleChange('email', v)}
+        onChange={(v) => handleChange('email', v)}
       />
 
       <Input
         type={showPassword ? 'text' : 'password'}
         placeholder="Password"
         value={form.password}
-        onChange={(v: string) => handleChange('password', v)}
+        onChange={(v) => handleChange('password', v)}
         isPassword
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
       />
 
       <div className="text-right">
