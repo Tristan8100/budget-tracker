@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
-import { Mail, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import {
+  Mail,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle,
+} from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import Link from 'next/link';
 
@@ -15,22 +20,36 @@ export function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
 
   const containerVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+    hidden: { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.25,
+      },
+    },
   };
 
   const inputVariants: Variants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i) => ({ opacity: 1, x: 0, transition: { delay: i * 0.1, duration: 0.3 } }),
+    hidden: { opacity: 0, y: 8 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.2,
+      },
+    }),
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setError('');
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+      redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
 
     setLoading(false);
@@ -46,42 +65,53 @@ export function ForgotPasswordForm() {
   if (sent) {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="space-y-6 text-center"
+        transition={{ duration: 0.2 }}
+        className="space-y-6"
       >
         <div className="flex justify-center">
-          <div className="relative">
-            <CheckCircle className="w-14 h-14 text-red-700" />
-            <div className="absolute inset-0 blur-xl bg-red-700/30 animate-pulse" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border bg-muted">
+            <CheckCircle className="h-7 w-7 text-foreground" />
           </div>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-white font-mono font-bold tracking-widest text-sm">EMAIL_SENT</p>
-          <p className="text-gray-400 font-mono text-xs leading-relaxed">
-            Check <span className="text-red-500">{email}</span> for a password reset link.
+        <div className="space-y-2 text-center">
+          <h2 className="text-lg font-semibold tracking-tight">
+            Check your email
+          </h2>
+
+          <p className="text-sm text-muted-foreground">
+            We sent a password reset link to{' '}
+            <span className="font-medium text-foreground">
+              {email}
+            </span>
+            .
           </p>
-          <p className="text-gray-600 font-mono text-[10px]">
-            Didn't receive it? Check your spam folder.
+
+          <p className="text-xs text-muted-foreground">
+            If you don&apos;t see it, check your spam folder.
           </p>
         </div>
 
-        <div className="pt-2 space-y-3">
+        <div className="space-y-3">
           <button
             type="button"
-            onClick={() => { setSent(false); setEmail(''); }}
-            className="w-full border border-white/10 hover:border-red-900/50 text-gray-400 hover:text-white py-2 px-4 font-mono text-xs tracking-widest transition-all duration-300"
+            onClick={() => {
+              setSent(false);
+              setEmail('');
+            }}
+            className="inline-flex h-11 w-full items-center justify-center rounded-md border bg-background px-4 text-sm font-medium transition-colors hover:bg-muted"
           >
-            TRY_ANOTHER_EMAIL
+            Try another email
           </button>
+
           <Link
             href="/auth/login"
-            className="flex items-center justify-center gap-2 text-xs font-mono text-gray-500 hover:text-red-500 transition-colors"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="w-3 h-3" />
-            BACK_TO_LOGIN
+            <ArrowLeft className="h-4 w-4" />
+            Back to login
           </Link>
         </div>
       </motion.div>
@@ -93,50 +123,66 @@ export function ForgotPasswordForm() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4"
       onSubmit={handleSubmit}
+      className="space-y-5"
     >
-      <motion.div custom={0} variants={inputVariants}>
-        <label className="block text-sm font-mono text-gray-300 mb-2">EMAIL</label>
-        <div className="relative group">
-          <Mail className="absolute left-3 top-3 w-5 h-5 text-red-900/50 group-hover:text-red-900 transition-colors" />
+      <motion.div
+        custom={0}
+        variants={inputVariants}
+        className="space-y-2"
+      >
+        <label className="text-sm font-medium">
+          Email
+        </label>
+
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
           <input
             type="email"
-            placeholder="enter@example.com"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full bg-gray-900/50 border border-gray-800 hover:border-red-900/30 focus:border-red-900 rounded px-4 py-2 pl-10 text-white placeholder-gray-600 transition-colors duration-300 focus:outline-none focus:ring-0"
+            className="flex h-11 w-full rounded-md border border-input bg-background px-10 py-2 text-sm ring-offset-background transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
         </div>
       </motion.div>
 
       {error && (
-        <motion.p custom={1} variants={inputVariants} className="text-red-500 text-xs font-mono">
+        <motion.p
+          custom={1}
+          variants={inputVariants}
+          className="text-sm text-destructive"
+        >
           {error}
         </motion.p>
       )}
 
-      <motion.div custom={2} variants={inputVariants} className="pt-4">
+      <motion.div
+        custom={2}
+        variants={inputVariants}
+        className="space-y-3"
+      >
         <motion.button
-          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded font-mono font-semibold transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg shadow-red-900/20 hover:shadow-red-900/40"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
         >
-          {loading ? 'SENDING...' : 'SEND_RESET_LINK'}
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </motion.button>
-      </motion.div>
+          {loading ? 'Sending...' : 'Send reset link'}
 
-      <motion.div custom={3} variants={inputVariants} className="text-center pt-2">
+          {!loading && (
+            <ArrowRight className="h-4 w-4" />
+          )}
+        </motion.button>
+
         <Link
           href="/auth/login"
-          className="flex items-center justify-center gap-2 text-xs font-mono text-gray-500 hover:text-red-500 transition-colors"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="w-3 h-3" />
-          BACK_TO_LOGIN
+          <ArrowLeft className="h-4 w-4" />
+          Back to login
         </Link>
       </motion.div>
     </motion.form>

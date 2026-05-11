@@ -10,15 +10,15 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-black flex overflow-hidden">
+    <div className="min-h-screen bg-card flex overflow-hidden">
 
       {/* Image side */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <Image
-          src="/IMG_2063.JPG"
+          src="/layoutOverlay.png"
           alt="Background"
           fill
-          className="object-cover opacity-40 blur-[2px]"
+          className="object-cover blur-[1px]"
         />
       </div>
 
@@ -31,8 +31,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <h1 className="text-xs font-mono text-gray-400">BUDGET TRACKER</h1>
             </div>
 
-            <Link href="/" className="text-3xl font-bold text-white">
-              BUDGET <span className="text-red-900">TRACKER</span>
+            <Link href="/" className="text-3xl font-bold text-primary">
+              BUDGET <span className="text-primary">TRACKER</span>
             </Link>
           </div>
 
