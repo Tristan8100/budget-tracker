@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { supabase } from '@/utils/supabase/client'
 import { redirect } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  
+  const pathname = usePathname()
+  //const isDashboardPage = pathname.startsWith('/dashboard')
+
+  console.log('pathname', pathname.split('/')[pathname.split('/').length - 1])
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
@@ -52,7 +58,7 @@ export default function DashboardLayout({
             {/* Logo/Branding */}
             <Link 
               href="/dashboard" 
-              className="flex items-center gap-2 group transition-all duration-200"
+              className="flex items-center gap-2 group transition-all duration-200 hover:-translate-y-1"
             >
               <div className="w-10 h-10 rounded-md bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow duration-200">
                 <span className="text-primary-foreground font-bold text-base">W</span>
@@ -70,7 +76,7 @@ export default function DashboardLayout({
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="relative group px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200 flex items-center gap-2 rounded-md hover:bg-muted/40 active:bg-muted/60"
+                    className={`relative group ${item.href.split('/')[item.href.split('/').length - 1] === pathname.split('/')[pathname.split('/').length - 1] ? 'bg-muted/40' : ''} px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-200 flex items-center gap-2 rounded-md hover:bg-muted/40 active:bg-muted/60`}
                   >
                     <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
                     <span>{item.label}</span>
@@ -142,7 +148,7 @@ export default function DashboardLayout({
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto sm:px-6 sm:py-8">
         {children}
       </main>
     </div>
