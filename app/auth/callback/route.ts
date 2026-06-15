@@ -14,6 +14,8 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     console.log('exchange error:', error)
     console.log('exchange data:', data)
+
+    
     if (!error) {
       const redirectTo = type === 'recovery' ? '/auth/reset-password' : next
       return NextResponse.redirect(`${origin}${redirectTo}`)
@@ -22,6 +24,8 @@ export async function GET(request: Request) {
 
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as any })
+
+    
     if (!error) {
       const redirectTo = type === 'recovery' ? '/auth/reset-password' : next
       return NextResponse.redirect(`${origin}${redirectTo}`)
