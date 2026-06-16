@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+
 import { Pencil, Trash2 } from 'lucide-react';
 import type { Transaction } from 'components/modules/transaction/hooks/useTransactions';
 import type { Wallet} from 'components/modules/wallet/hooks/useWallets';
@@ -50,7 +51,7 @@ export default function TransactionList({ transactions, wallets, onEdit, onDelet
   if (transactions.length === 0) {
     return (
       <div className="text-center py-16 text-muted-foreground text-sm">
-        No transactions today yet.
+        No transactions today yet. Create one to view.
       </div>
     );
   }
