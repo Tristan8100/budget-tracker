@@ -20,11 +20,10 @@ import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 const supabase = createClient();
 
 export default function SettingsPage() {
-  // --- Profile form state ---
+  
   const [fullName, setFullName] = useState("");
   const [initialFullName, setInitialFullName] = useState("");
 
-  // --- Password form state ---
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,7 +42,7 @@ export default function SettingsPage() {
     resetPasswordStatus,
   } = useSettings();
 
-  // Load current user's full_name on mount
+ 
   useEffect(() => {
     async function loadUser() {
       const {
@@ -65,7 +64,7 @@ export default function SettingsPage() {
     loadUser();
   }, []);
 
-  // --- Handlers ---
+
 
   async function handleProfileSubmit(e: React.FormEvent) {
     e.preventDefault();
